@@ -1,5 +1,5 @@
 /**
- * Brand Colors - Digital Agency
+ * Brand Colors - Solution Zone
  * As defined in .gemini/instructions.md
  */
 export const COLORS = {
@@ -21,11 +21,11 @@ export const COLORS = {
  * Site Information
  */
 export const SITE_INFO = {
-  name: "Digital Agency",
+  name: "Solution Zone",
   tagline: "Transforming Ideas into Digital Excellence",
   description:
     "We are a full-service digital agency offering UI/UX design, web & app development, marketing, and business consultation services.",
-  email: "hello@digitalagency.com",
+  email: "hello@solutionzone.com",
   phone: "+1 (555) 123-4567",
   address: "123 Innovation Street, Suite 500, San Francisco, CA 94103",
 } as const;
@@ -34,12 +34,12 @@ export const SITE_INFO = {
  * Social Media Links
  */
 export const SOCIAL_LINKS = {
-  twitter: "https://twitter.com/digitalagency",
-  linkedin: "https://linkedin.com/company/digitalagency",
-  facebook: "https://facebook.com/digitalagency",
-  instagram: "https://instagram.com/digitalagency",
-  github: "https://github.com/digitalagency",
-  dribbble: "https://dribbble.com/digitalagency",
+  twitter: "https://twitter.com/solutionzone",
+  linkedin: "https://linkedin.com/company/solutionzone",
+  facebook: "https://facebook.com/solutionzone",
+  instagram: "https://instagram.com/solutionzone",
+  github: "https://github.com/solutionzone",
+  dribbble: "https://dribbble.com/solutionzone",
 } as const;
 
 /**
@@ -147,7 +147,7 @@ export const TESTIMONIALS = [
     company: "TechStore Inc.",
     avatar: "/testimonials/john.jpg",
     content:
-      "Working with this agency transformed our online presence. The redesign increased our conversion rate by 150%. Highly recommended!",
+      "Working with Solution Zone transformed our online presence. The redesign increased our conversion rate by 150%. Highly recommended!",
     rating: 5,
   },
   {
