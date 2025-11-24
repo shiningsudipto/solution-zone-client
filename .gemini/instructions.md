@@ -6,6 +6,7 @@ This frontend-only project represents a complete digital agency platform with pu
 
 ## 1. Project Overview
 
+Name: Solution Zone
 This application includes:
 
 - Public-facing site for a digital agency offering **UI/UX**, **Marketing**, **Web & App Development**, and **Business Consultation** services.
