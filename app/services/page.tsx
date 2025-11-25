@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { services } from "@/data/services";
 import { ArrowRight, Sparkles, CheckCircle } from "lucide-react";
+import { FAQSection } from "@/components/ui/FAQSection";
 
 export default function ServicesPage() {
   // Group services by category for better organization
@@ -259,6 +260,9 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection limit={6} />
 
       {/* CTA Section */}
       <section className="py-20 sm:py-32 bg-linear-to-r from-primary to-secondary relative overflow-hidden">
