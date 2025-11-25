@@ -121,4 +121,84 @@ export const faqs: FAQ[] = [
     topic: "Process",
     order: 4,
   },
+  {
+    id: "faq-016",
+    question: "What's the difference between UI and UX design?",
+    answer:
+      "UI (User Interface) design focuses on the visual elements—colors, typography, buttons, and layout. UX (User Experience) design focuses on how users interact with your product and their overall experience. Both work together to create beautiful, functional products.",
+    topic: "Process",
+    order: 5,
+  },
+  {
+    id: "faq-017",
+    question: "Do you offer website redesign services?",
+    answer:
+      "Yes, we specialize in website redesigns. We'll analyze your current site, identify areas for improvement, and create a modern, user-friendly design that better serves your business goals and user needs.",
+    topic: "Services",
+    order: 4,
+  },
+  {
+    id: "faq-018",
+    question: "What frameworks do you use for web development?",
+    answer:
+      "We primarily use React and Next.js for frontend development, Node.js for backend, and work with databases like PostgreSQL and MongoDB. We choose technologies based on your project requirements and scalability needs.",
+    topic: "Technology",
+    order: 3,
+  },
+  {
+    id: "faq-019",
+    question: "Can you build custom web applications?",
+    answer:
+      "Absolutely! We specialize in custom web application development. Whether you need a SaaS platform, internal tool, or complex web system, we can build it from scratch or enhance your existing application.",
+    topic: "Services",
+    order: 5,
+  },
+  {
+    id: "faq-020",
+    question: "Do you develop apps for both iOS and Android?",
+    answer:
+      "Yes, we develop native apps for both iOS and Android, as well as cross-platform apps using React Native or Flutter that work on both platforms with a single codebase.",
+    topic: "Technology",
+    order: 4,
+  },
+  {
+    id: "faq-021",
+    question: "How much does it cost to develop a mobile app?",
+    answer:
+      "Mobile app costs vary widely based on complexity, features, and platforms. A simple app might start at $20,000, while complex apps can exceed $100,000. We'll provide a detailed estimate after understanding your requirements.",
+    topic: "Pricing",
+    order: 2,
+  },
+  {
+    id: "faq-022",
+    question: "What digital marketing channels do you focus on?",
+    answer:
+      "We offer comprehensive digital marketing including SEO, Google Ads, social media marketing, email marketing, content marketing, and conversion rate optimization. We'll recommend the best channels based on your target audience and goals.",
+    topic: "Marketing",
+    order: 2,
+  },
+  {
+    id: "faq-023",
+    question: "How long does SEO take to show results?",
+    answer:
+      "SEO is a long-term strategy. You'll typically start seeing meaningful improvements in 3-6 months, with continued growth over time. Quick wins can happen sooner, but sustainable rankings take consistent effort.",
+    topic: "Marketing",
+    order: 3,
+  },
+  {
+    id: "faq-024",
+    question: "What is your approach to business consultation?",
+    answer:
+      "We take a collaborative approach, starting with understanding your business challenges and goals. We then provide strategic recommendations, help with implementation, and measure results to ensure continuous improvement.",
+    topic: "About",
+    order: 3,
+  },
+  {
+    id: "faq-025",
+    question: "Do you provide training for our team?",
+    answer:
+      "Yes, as part of our business consultation and implementation services, we offer training and knowledge transfer to ensure your team can effectively use and maintain the solutions we implement.",
+    topic: "Support",
+    order: 2,
+  },
 ];
