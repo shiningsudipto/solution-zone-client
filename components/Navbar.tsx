@@ -92,14 +92,6 @@ export default function Navbar() {
                     {servicesDropdownOpen && (
                       <div className="absolute top-full left-0 pt-2 w-72">
                         <div className="bg-card border border-border rounded-xl shadow-2xl py-2 animate-in fade-in slide-in-from-top-2 duration-200">
-                          <div className="px-4 py-3 border-b border-border">
-                            <p className="text-sm font-semibold text-foreground">
-                              Our Services
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              Explore our comprehensive solutions
-                            </p>
-                          </div>
                           {services
                             .sort((a, b) => a.order - b.order)
                             .map((service) => (
@@ -108,13 +100,6 @@ export default function Navbar() {
                                 href={`/services/${service.slug}`}
                                 className="flex items-start gap-3 px-4 py-3 hover:bg-muted transition-colors group"
                               >
-                                <div className="w-10 h-10 bg-linear-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                                  <span className="text-sm font-bold text-primary">
-                                    {service.title
-                                      .substring(0, 2)
-                                      .toUpperCase()}
-                                  </span>
-                                </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="font-medium text-foreground group-hover:text-primary transition-colors">
                                     {service.title}
@@ -125,14 +110,6 @@ export default function Navbar() {
                                 </div>
                               </Link>
                             ))}
-                          <div className="px-4 py-3 border-t border-border mt-2">
-                            <Link
-                              href="/services"
-                              className="text-sm font-medium text-primary hover:underline"
-                            >
-                              View All Services →
-                            </Link>
-                          </div>
                         </div>
                       </div>
                     )}
