@@ -1,6 +1,4 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { services } from "@/data/services";
 import { blogPosts } from "@/data/blog";
 import { PROCESS_STEPS } from "@/lib/constants";
 import {
@@ -18,25 +16,57 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { FAQSection } from "@/components/ui/FAQSection";
+import type { Service } from "@/types";
 
-// Generate static params for all services
-export async function generateStaticParams() {
-  return services.map((service) => ({
-    slug: service.slug,
-  }));
+// Tools & Technologies by service
+const toolsMap: Record<string, { name: string; icon: any }[]> = {
+  "ui-ux-design": [
+    { name: "Figma", icon: Palette },
+    { name: "Adobe XD", icon: Palette },
+    { name: "Sketch", icon: Palette },
+    { name: "InVision", icon: Lightbulb },
+    { name: "Principle", icon: Zap },
+    { name: "Maze", icon: Users },
+  ],
+  "web-development": [
+    { name: "React", icon: Code },
+    { name: "Next.js", icon: Code },
+    { name: "TypeScript", icon: Code },
+    { name: "Node.js", icon: Globe },
+    { name: "Tailwind CSS", icon: Palette },
+    { name: "PostgreSQL", icon: Shield },
+  ],
+  "app-development": [
+    { name: "React Native", icon: Smartphone },
+    { name: "Flutter", icon: Smartphone },
+    { name: "Swift", icon: Code },
+    { name: "Kotlin", icon: Code },
+    { name: "Firebase", icon: Zap },
+    { name: "App Store", icon: Globe },
+  ],
+  "digital-marketing": [
+    { name: "Google Analytics", icon: TrendingUp },
+    { name: "Google Ads", icon: Search },
+    { name: "Facebook Ads", icon: Users },
+    { name: "SEMrush", icon: Search },
+    { name: "Mailchimp", icon: Zap },
+    { name: "HubSpot", icon: TrendingUp },
+  ],
+  "business-consultation": [
+    { name: "Strategic Planning", icon: Lightbulb },
+    { name: "Data Analysis", icon: TrendingUp },
+    { name: "Process Mapping", icon: Zap },
+    { name: "Market Research", icon: Search },
+    { name: "ROI Tracking", icon: Shield },
+    { name: "Change Management", icon: Users },
+  ],
+};
+
+interface ServiceDetailLayoutProps {
+  service: Service;
 }
 
-export default function ServiceDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  const service = services.find((s) => s.slug === params.slug);
-
-  if (!service) {
-    notFound();
-  }
-
+export function ServiceDetailLayout({ service }: ServiceDetailLayoutProps) {
   // Get related case studies
   const relatedCaseStudies = blogPosts
     .filter((post) => post.type === "case-study" && post.isPublished)
@@ -51,50 +81,6 @@ export default function ServiceDetailPage({
     ? "marketing"
     : "design";
   const processSteps = PROCESS_STEPS[processKey as keyof typeof PROCESS_STEPS];
-
-  // Tools & Technologies by service
-  const toolsMap: Record<string, { name: string; icon: any }[]> = {
-    "ui-ux-design": [
-      { name: "Figma", icon: Palette },
-      { name: "Adobe XD", icon: Palette },
-      { name: "Sketch", icon: Palette },
-      { name: "InVision", icon: Lightbulb },
-      { name: "Principle", icon: Zap },
-      { name: "Maze", icon: Users },
-    ],
-    "web-development": [
-      { name: "React", icon: Code },
-      { name: "Next.js", icon: Code },
-      { name: "TypeScript", icon: Code },
-      { name: "Node.js", icon: Globe },
-      { name: "Tailwind CSS", icon: Palette },
-      { name: "PostgreSQL", icon: Shield },
-    ],
-    "app-development": [
-      { name: "React Native", icon: Smartphone },
-      { name: "Flutter", icon: Smartphone },
-      { name: "Swift", icon: Code },
-      { name: "Kotlin", icon: Code },
-      { name: "Firebase", icon: Zap },
-      { name: "App Store", icon: Globe },
-    ],
-    "digital-marketing": [
-      { name: "Google Analytics", icon: TrendingUp },
-      { name: "Google Ads", icon: Search },
-      { name: "Facebook Ads", icon: Users },
-      { name: "SEMrush", icon: Search },
-      { name: "Mailchimp", icon: Zap },
-      { name: "HubSpot", icon: TrendingUp },
-    ],
-    "business-consultation": [
-      { name: "Strategic Planning", icon: Lightbulb },
-      { name: "Data Analysis", icon: TrendingUp },
-      { name: "Process Mapping", icon: Zap },
-      { name: "Market Research", icon: Search },
-      { name: "ROI Tracking", icon: Shield },
-      { name: "Change Management", icon: Users },
-    ],
-  };
 
   const tools = toolsMap[service.slug] || toolsMap["ui-ux-design"];
 
