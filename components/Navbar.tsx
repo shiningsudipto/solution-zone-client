@@ -133,6 +133,16 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
             <Link
+              href="/dashboard"
+              className={`px-6 py-2.5 rounded-lg font-semibold transition-all hover:scale-105 ${
+                isActive("/dashboard")
+                  ? "text-primary bg-primary/10 border-2 border-primary"
+                  : "text-foreground border-2 border-border hover:border-primary hover:text-primary"
+              }`}
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/contact"
               className="px-6 py-2.5 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all hover:scale-105 shadow-lg shadow-primary/25"
             >
@@ -228,7 +238,17 @@ export default function Navbar() {
             ))}
 
             {/* Mobile CTA */}
-            <div className="pt-4 border-t border-border">
+            <div className="pt-4 border-t border-border space-y-2">
+              <Link
+                href="/dashboard"
+                className={`block w-full text-center px-6 py-3 rounded-lg font-semibold transition-all ${
+                  isActive("/dashboard")
+                    ? "text-primary bg-primary/10 border-2 border-primary"
+                    : "text-foreground border-2 border-border hover:border-primary hover:text-primary"
+                }`}
+              >
+                Dashboard
+              </Link>
               <Link
                 href="/contact"
                 className="block w-full text-center px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all shadow-lg shadow-primary/25"

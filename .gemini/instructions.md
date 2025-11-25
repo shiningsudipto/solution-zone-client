@@ -135,6 +135,7 @@ All CRUD operations in the dashboard must:
 - Clean and maintainable components.
 - Consistent spacing, typography, and visual hierarchy.
 - Use reusable UI blocks for cards, forms, lists, and tables.
+- Take inspiration from the given demo images:
 
 ---
 
