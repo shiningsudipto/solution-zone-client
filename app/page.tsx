@@ -10,6 +10,7 @@ import {
   Users,
   TrendingUp,
 } from "lucide-react";
+import { FAQSection } from "@/components/ui/FAQSection";
 
 export default function Home() {
   // Get case studies for highlights
@@ -380,6 +381,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQSection limit={6} />
 
       {/* CTA Section */}
       <section className="py-20 sm:py-32 bg-gradient-to-r from-primary to-secondary relative overflow-hidden">

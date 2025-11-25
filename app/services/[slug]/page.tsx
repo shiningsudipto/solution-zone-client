@@ -17,6 +17,7 @@ import {
   Globe,
   Lightbulb,
 } from "lucide-react";
+import { FAQSection } from "@/components/ui/FAQSection";
 
 // Generate static params for all services
 export async function generateStaticParams() {
@@ -377,6 +378,9 @@ export default function ServiceDetailPage({
           </div>
         </section>
       )}
+
+      {/* FAQ Section */}
+      <FAQSection limit={6} />
 
       {/* CTA Section */}
       <section className="py-20 sm:py-32 bg-linear-to-r from-primary to-secondary relative overflow-hidden">
