@@ -197,7 +197,7 @@ export default function TasksPage() {
 
     if (!targetStatus) return;
 
-    // If moving within the same column
+    // If moving within the same column (reordering)
     if (activeTask.status === targetStatus && overTask) {
       const tasksInColumn = tasks
         .filter((t) => t.status === targetStatus)
@@ -213,13 +213,13 @@ export default function TasksPage() {
       const [removed] = reordered.splice(oldIndex, 1);
       reordered.splice(newIndex, 0, removed);
 
-      // Update all tasks in this column with new order
+      // Update all tasks in this column with new order values
       const updatedTasks = tasks.map((task) => {
         if (task.status === targetStatus) {
-          const newOrder = reordered.findIndex((t) => t.id === task.id);
+          const newOrderIndex = reordered.findIndex((t) => t.id === task.id);
           return {
             ...task,
-            order: newOrder,
+            order: newOrderIndex,
             updatedAt: task.id === activeId ? new Date().toISOString() : task.updatedAt,
           };
         }
@@ -231,59 +231,58 @@ export default function TasksPage() {
     }
 
     // Moving to a different column
-    const sourceColumnTasks = tasks
-      .filter((t) => t.status === activeTask.status && t.id !== activeId)
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
+    setTasks((currentTasks) => {
+      const sourceColumnTasks = currentTasks
+        .filter((t) => t.status === activeTask.status && t.id !== activeId)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    const targetColumnTasks = tasks
-      .filter((t) => t.status === targetStatus)
-      .sort((a, b) => (a.order || 0) - (b.order || 0));
+      const targetColumnTasks = currentTasks
+        .filter((t) => t.status === targetStatus)
+        .sort((a, b) => (a.order || 0) - (b.order || 0));
 
-    // Calculate insertion position
-    let insertPosition = 0;
+      // Calculate insertion position in target column
+      let insertPosition = targetColumnTasks.length; // Default: add to end
 
-    if (overTask && overTask.status === targetStatus) {
-      // Insert before the task we're hovering over
-      insertPosition = targetColumnTasks.findIndex((t) => t.id === overId);
-      if (insertPosition === -1) insertPosition = targetColumnTasks.length;
-    } else {
-      // Dropping on column header - add to end
-      insertPosition = targetColumnTasks.length;
-    }
-
-    // Create new arrays with proper ordering
-    const newTargetColumnTasks = [...targetColumnTasks];
-    newTargetColumnTasks.splice(insertPosition, 0, { ...activeTask, status: targetStatus });
-
-    // Update all tasks with new orders
-    const updatedTasks = tasks.map((task) => {
-      // Update source column (excluding moved task)
-      if (task.status === activeTask.status && task.id !== activeId) {
-        const newOrder = sourceColumnTasks.findIndex((t) => t.id === task.id);
-        return { ...task, order: newOrder };
+      if (overTask && overTask.status === targetStatus) {
+        // Insert before the task we're hovering over
+        insertPosition = targetColumnTasks.findIndex((t) => t.id === overId);
+        if (insertPosition === -1) insertPosition = targetColumnTasks.length;
       }
 
-      // Update target column (including moved task)
-      if (task.status === targetStatus) {
-        const newOrder = newTargetColumnTasks.findIndex((t) => t.id === task.id);
-        return { ...task, order: newOrder };
-      }
+      // Create the moved task with new status
+      const movedTask = { ...activeTask, status: targetStatus };
 
-      // This is the moved task
-      if (task.id === activeId) {
-        const newOrder = newTargetColumnTasks.findIndex((t) => t.id === task.id);
-        return {
-          ...task,
-          status: targetStatus,
-          order: newOrder,
-          updatedAt: new Date().toISOString(),
-        };
-      }
+      // Build new target column array with moved task inserted
+      const newTargetColumnTasks = [...targetColumnTasks];
+      newTargetColumnTasks.splice(insertPosition, 0, movedTask);
 
-      return task;
+      // Update all tasks with new orders per status
+      return currentTasks.map((task) => {
+        // Skip the moved task - we'll handle it separately
+        if (task.id === activeId) {
+          return {
+            ...task,
+            status: targetStatus,
+            order: insertPosition,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+
+        // Update order for tasks in the source column (shift down after removal)
+        if (task.status === activeTask.status) {
+          const newOrder = sourceColumnTasks.findIndex((t) => t.id === task.id);
+          return { ...task, order: newOrder === -1 ? task.order : newOrder };
+        }
+
+        // Update order for tasks in the target column (shift to accommodate new task)
+        if (task.status === targetStatus) {
+          const newOrder = newTargetColumnTasks.findIndex((t) => t.id === task.id);
+          return { ...task, order: newOrder === -1 ? task.order : newOrder };
+        }
+
+        return task;
+      });
     });
-
-    setTasks(updatedTasks);
   };
 
   const handleDragCancel = () => {
