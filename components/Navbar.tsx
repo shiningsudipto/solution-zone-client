@@ -118,9 +118,9 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-4">
             <Link
-              href="/dashboard"
+              href="/admin/dashboard"
               className={`px-6 py-2.5 rounded-lg font-semibold transition-all hover:scale-105 ${
-                isActive("/dashboard")
+                isActive("/admin/dashboard")
                   ? "text-primary bg-primary/10 border-2 border-primary"
                   : "text-foreground border-2 border-border hover:border-primary hover:text-primary"
               }`}
