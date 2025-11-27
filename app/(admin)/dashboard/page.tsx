@@ -42,25 +42,25 @@ const quickActions = [
   {
     title: "New Contact",
     description: "Add a new contact submission",
-    href: "/dashboard/contacts",
+    href: "/admin/dashboard/contacts",
     color: "bg-primary/10 text-primary border-primary/20",
   },
   {
     title: "Create Project",
     description: "Start a new project",
-    href: "/dashboard/projects",
+    href: "/admin/dashboard/projects",
     color: "bg-secondary/10 text-secondary border-secondary/20",
   },
   {
     title: "Add Task",
     description: "Create a new task",
-    href: "/dashboard/tasks",
+    href: "/admin/dashboard/tasks",
     color: "bg-accent/10 text-accent border-accent/20",
   },
   {
     title: "Write Post",
     description: "Create a blog post",
-    href: "/dashboard/blog",
+    href: "/admin/dashboard/blog",
     color: "bg-blue-500/10 text-blue-600 border-blue-500/20",
   },
 ];

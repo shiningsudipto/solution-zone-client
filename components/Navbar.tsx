@@ -10,17 +10,7 @@ import { Menu, X, ChevronDown } from "lucide-react";
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -43,18 +33,13 @@ export default function Navbar() {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-card/95 backdrop-blur-md shadow-lg border-b border-border"
-          : "bg-transparent"
-      }`}
-    >
+    <nav className="sticky top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md shadow-lg border-b border-border">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:scale-110 transition-transform">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-xl">
               SZ
             </div>
             <span className="text-xl font-bold text-foreground">
@@ -240,9 +225,9 @@ export default function Navbar() {
             {/* Mobile CTA */}
             <div className="pt-4 border-t border-border space-y-2">
               <Link
-                href="/dashboard"
+                href="/admin/dashboard"
                 className={`block w-full text-center px-6 py-3 rounded-lg font-semibold transition-all ${
-                  isActive("/dashboard")
+                  isActive("/admin/dashboard")
                     ? "text-primary bg-primary/10 border-2 border-primary"
                     : "text-foreground border-2 border-border hover:border-primary hover:text-primary"
                 }`}
