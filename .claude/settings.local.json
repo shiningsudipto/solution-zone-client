@@ -3,7 +3,8 @@
     "allow": [
       "Bash(powershell -Command:*)",
       "Bash(dir \"c:\\projects\\solution-zone\\app\" /b)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []
