@@ -13,6 +13,7 @@ This application includes:
 - Blog section with articles and case studies.
 - Admin dashboard for managing contacts, projects, tasks, team members, and blog content.
 - All create/update operations occur via **modal/popup interfaces**.
+- For modal use CustomModal from components
 - Dummy data is used throughout the app.
 
 ## Colors:
