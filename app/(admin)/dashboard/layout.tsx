@@ -20,7 +20,7 @@ const navigation = [
   { name: "Tasks", href: "/dashboard/tasks", icon: CheckSquare },
   { name: "Team", href: "/dashboard/team", icon: Users },
   { name: "Blog", href: "/dashboard/blog", icon: FileText },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  // { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export default function DashboardLayout({
@@ -37,7 +37,7 @@ export default function DashboardLayout({
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b border-border">
-            <Link href="/admin/dashboard" className="flex items-center gap-3">
+            <Link href="/dashboard" className="flex items-center gap-3">
               <div className="w-10 h-10 bg-linear-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold text-xl">
                 S
               </div>
