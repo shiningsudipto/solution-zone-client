@@ -19,8 +19,6 @@ import {
   Tag,
   TrendingUp,
 } from "lucide-react";
-import { ViewBlogModal } from "./_components/ViewBlogModal";
-import { EditBlogModal } from "./_components/EditBlogModal";
 
 const typeColors = {
   article: "bg-blue-500/10 text-blue-600 border-blue-500/20",
@@ -38,10 +36,6 @@ export default function BlogPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
-  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [editingPost, setEditingPost] = useState<Partial<BlogPost>>({});
 
   // Get author name by ID
   const getAuthorName = (authorId: string) => {
@@ -69,31 +63,6 @@ export default function BlogPage() {
 
     return matchesSearch && matchesType && matchesStatus;
   });
-
-  const handleViewPost = (post: BlogPost) => {
-    setSelectedPost(post);
-    setIsViewModalOpen(true);
-  };
-
-  const handleEditPost = (post: BlogPost) => {
-    setEditingPost(post);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingPost.id) {
-      setPosts((prev) =>
-        prev.map((p) =>
-          p.id === editingPost.id
-            ? { ...p, ...editingPost, updatedAt: new Date().toISOString() }
-            : p
-        )
-      );
-      setIsEditModalOpen(false);
-      setEditingPost({});
-    }
-  };
-
 
   const handleDeletePost = (id: string) => {
     if (confirm("Are you sure you want to delete this blog post?")) {
@@ -299,14 +268,14 @@ export default function BlogPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 pt-2">
                     <button
-                      onClick={() => handleViewPost(post)}
+                      onClick={() => router.push(`/dashboard/blog/${post.id}`)}
                       className="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted/70 rounded-lg transition-colors text-sm font-medium"
                     >
                       <Eye className="w-4 h-4" />
                       View
                     </button>
                     <button
-                      onClick={() => handleEditPost(post)}
+                      onClick={() => router.push(`/dashboard/blog/${post.id}/edit`)}
                       className="p-2 hover:bg-muted rounded-lg transition-colors"
                       title="Edit"
                     >
@@ -334,21 +303,6 @@ export default function BlogPage() {
         </div>
       )}
 
-      {/* Modals */}
-      <ViewBlogModal
-        isOpen={isViewModalOpen}
-        onClose={() => setIsViewModalOpen(false)}
-        post={selectedPost}
-        getAuthorName={getAuthorName}
-      />
-
-      <EditBlogModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        post={editingPost}
-        onPostChange={setEditingPost}
-        onSave={handleSaveEdit}
-      />
     </div>
   );
 }
