@@ -20,6 +20,7 @@ const navigation = [
   { name: "Tasks", href: "/dashboard/tasks", icon: CheckSquare },
   { name: "Team", href: "/dashboard/team", icon: Users },
   { name: "Blog", href: "/dashboard/blog", icon: FileText },
+  { name: "Career", href: "/dashboard/careers", icon: FileText },
   // { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

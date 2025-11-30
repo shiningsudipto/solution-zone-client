@@ -116,6 +116,30 @@ export interface FAQ {
   order?: number;
 }
 
+// Career/Job Posting Collection
+export interface Career {
+  id: ID;
+  title: string;
+  department: string;
+  location: string;
+  type: "full-time" | "part-time" | "contract" | "internship";
+  level: "entry" | "mid" | "senior" | "lead";
+  description: string;
+  responsibilities: string[];
+  requirements: string[];
+  niceToHave?: string[];
+  benefits?: string[];
+  salary?: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  isActive: boolean;
+  postedAt: string;
+  updatedAt?: string;
+  applicants?: number;
+}
+
 // Site Settings Collection
 export interface SiteSettings {
   id: ID;

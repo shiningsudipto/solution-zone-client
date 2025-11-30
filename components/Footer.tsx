@@ -15,12 +15,11 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const services = [
-    { name: "Web Development", href: "/services#web-development" },
-    { name: "Mobile Apps", href: "/services#mobile-apps" },
-    { name: "UI/UX Design", href: "/services#ui-ux-design" },
-    { name: "Digital Marketing", href: "/services#digital-marketing" },
-    { name: "Cloud Solutions", href: "/services#cloud-solutions" },
-    { name: "Consulting", href: "/services#consulting" },
+    { name: "Web Development", href: "/services/web-development" },
+    { name: "Mobile Apps", href: "/services/app-development" },
+    { name: "UI/UX Design", href: "/services/ui-ux-design" },
+    { name: "Digital Marketing", href: "/services/digital-marketing" },
+    { name: "Consulting", href: "/services/business-consultation" },
   ];
 
   const company = [
