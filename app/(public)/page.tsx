@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { FAQSection } from "@/components/ui/FAQSection";
+import RecentBlogsSlider from "@/components/RecentBlogsSlider";
 
 export default function Home() {
   // Get case studies for highlights
@@ -381,6 +382,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Recent Blogs Slider */}
+      <RecentBlogsSlider />
 
       {/* FAQ Section */}
       <FAQSection limit={6} />
