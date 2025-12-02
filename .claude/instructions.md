@@ -37,6 +37,7 @@ This project must maintain a readable, reusable, and scalable structure. Follow 
 - Maintain a clear separation between public pages and dashboard UI elements.
 - For modal/popup use CustomModal from components
 - For popover use CustomPopover from components
+- For table use CustomTable from components
 - Use components from components/ui
 
 ### **Pages**
