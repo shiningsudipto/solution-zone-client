@@ -8,8 +8,6 @@ import {
   Phone,
   Calendar,
   Plus,
-  Search,
-  Filter,
   Eye,
   Edit,
   Trash2,
@@ -17,6 +15,7 @@ import {
 import { ViewContactModal } from "./_components/ViewContactModal";
 import { EditContactModal } from "./_components/EditContactModal";
 import { AddContactModal } from "./_components/AddContactModal";
+import { CustomTable, Column, ColumnFilter } from "@/components/CustomTable";
 
 const statusColors = {
   new: "bg-blue-500/10 text-blue-600 border-blue-500/20",
@@ -35,8 +34,6 @@ const statusLabels = {
 export default function ContactsPage() {
   const [contacts, setContacts] =
     useState<ContactSubmission[]>(initialContacts);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedContact, setSelectedContact] =
     useState<ContactSubmission | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
@@ -45,19 +42,7 @@ export default function ContactsPage() {
   const [editingContact, setEditingContact] = useState<
     Partial<ContactSubmission>
   >({});
-
-  // Filter contacts
-  const filteredContacts = contacts.filter((contact) => {
-    const matchesSearch =
-      contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contact.message.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" || contact.status === statusFilter;
-
-    return matchesSearch && matchesStatus;
-  });
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
   const handleViewContact = (contact: ContactSubmission) => {
     setSelectedContact(contact);
@@ -98,6 +83,125 @@ export default function ContactsPage() {
     }
   };
 
+  // Define columns for CustomTable
+  const columns: Column<ContactSubmission>[] = [
+    {
+      key: "name",
+      label: "Contact",
+      sortable: true,
+      searchable: true,
+      exportable: true,
+      width: "250px",
+      render: (value, row) => (
+        <div>
+          <div className="font-medium text-foreground">{value}</div>
+          <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+            <Mail className="w-4 h-4" />
+            {row.email}
+          </div>
+          {row.phone && (
+            <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
+              <Phone className="w-4 h-4" />
+              {row.phone}
+            </div>
+          )}
+        </div>
+      ),
+      exportRender: (value) => value,
+    },
+    {
+      key: "email",
+      label: "Email",
+      exportable: true,
+      className: "hidden",
+    },
+    {
+      key: "phone",
+      label: "Phone",
+      exportable: true,
+      className: "hidden",
+    },
+    {
+      key: "message",
+      label: "Message",
+      searchable: true,
+      exportable: true,
+      width: "300px",
+      render: (value) => (
+        <div className="text-sm text-muted-foreground line-clamp-2 max-w-xs">
+          {value}
+        </div>
+      ),
+    },
+    {
+      key: "source",
+      label: "Source",
+      sortable: true,
+      exportable: true,
+      width: "120px",
+      render: (value) => (
+        <span className="text-sm text-muted-foreground capitalize">{value}</span>
+      ),
+    },
+    {
+      key: "status",
+      label: "Status",
+      sortable: true,
+      exportable: true,
+      width: "140px",
+      render: (value: ContactSubmission["status"]) => (
+        <span
+          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
+            statusColors[value]
+          }`}
+        >
+          {statusLabels[value]}
+        </span>
+      ),
+      exportRender: (value) => statusLabels[value as ContactSubmission["status"]],
+    },
+    {
+      key: "createdAt",
+      label: "Date",
+      sortable: true,
+      exportable: true,
+      width: "140px",
+      render: (value) => (
+        <div className="text-sm text-muted-foreground flex items-center gap-2">
+          <Calendar className="w-4 h-4" />
+          {new Date(value).toLocaleDateString()}
+        </div>
+      ),
+      exportRender: (value) => new Date(value).toLocaleDateString(),
+    },
+  ];
+
+  // Define filters for CustomTable
+  const filters: ColumnFilter[] = [
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { label: "New", value: "new" },
+        { label: "In Review", value: "in-review" },
+        { label: "Contacted", value: "contacted" },
+        { label: "Closed", value: "closed" },
+      ],
+    },
+    {
+      key: "source",
+      label: "Source",
+      options: [
+        { label: "Website", value: "website" },
+        { label: "Manual", value: "manual" },
+        { label: "Email", value: "email" },
+        { label: "Phone", value: "phone" },
+        { label: "Social", value: "social" },
+        { label: "Referral", value: "referral" },
+      ],
+    },
+  ];
+
   const statusCounts = {
     all: contacts.length,
     new: contacts.filter((c) => c.status === "new").length,
@@ -128,14 +232,9 @@ export default function ContactsPage() {
       {/* Stats */}
       <div className="grid gap-4 md:grid-cols-5">
         {Object.entries(statusCounts).map(([status, count]) => (
-          <button
+          <div
             key={status}
-            onClick={() => setStatusFilter(status)}
-            className={`p-4 rounded-xl border-2 transition-all text-left ${
-              statusFilter === status
-                ? "border-primary bg-primary/10"
-                : "border-border bg-card hover:border-primary/50"
-            }`}
+            className="p-4 rounded-xl border-2 border-border bg-card"
           >
             <div className="text-3xl font-bold text-foreground mb-1">
               {count}
@@ -145,140 +244,53 @@ export default function ContactsPage() {
                 ? "Total"
                 : statusLabels[status as keyof typeof statusLabels]}
             </div>
-          </button>
+          </div>
         ))}
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search contacts..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
-        <button className="inline-flex items-center gap-2 px-6 py-3 border-2 border-border rounded-lg font-semibold hover:border-primary hover:text-primary transition-all">
-          <Filter className="w-5 h-5" />
-          Filter
-        </button>
-      </div>
-
       {/* Contacts Table */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted/50 border-b border-border">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Contact
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Message
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Source
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-foreground">
-                  Date
-                </th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-foreground">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredContacts.map((contact) => (
-                <tr
-                  key={contact.id}
-                  className="hover:bg-muted/30 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div>
-                      <div className="font-medium text-foreground">
-                        {contact.name}
-                      </div>
-                      <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                        <Mail className="w-4 h-4" />
-                        {contact.email}
-                      </div>
-                      {contact.phone && (
-                        <div className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                          <Phone className="w-4 h-4" />
-                          {contact.phone}
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-muted-foreground line-clamp-2 max-w-xs">
-                      {contact.message}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-muted-foreground">
-                      {contact.source}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
-                        statusColors[contact.status]
-                      }`}
-                    >
-                      {statusLabels[contact.status]}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      {new Date(contact.createdAt).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => handleViewContact(contact)}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
-                        title="View"
-                      >
-                        <Eye className="w-4 h-4 text-muted-foreground" />
-                      </button>
-                      <button
-                        onClick={() => handleEditContact(contact)}
-                        className="p-2 hover:bg-muted rounded-lg transition-colors"
-                        title="Edit"
-                      >
-                        <Edit className="w-4 h-4 text-muted-foreground" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteContact(contact.id)}
-                        className="p-2 hover:bg-red-100 rounded-lg transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-600" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filteredContacts.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground">
-            <Mail className="w-12 h-12 mx-auto mb-4 opacity-50" />
-            <p>No contacts found</p>
+      <CustomTable
+        data={contacts}
+        columns={columns}
+        searchable
+        searchPlaceholder="Search contacts by name, email, or message..."
+        searchKeys={["name", "email", "message"]}
+        filters={filters}
+        selectable
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        defaultSortKey="createdAt"
+        defaultSortDirection="desc"
+        exportable
+        exportFilename="contacts_export.csv"
+        actions={(contact) => (
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => handleViewContact(contact)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              title="View"
+            >
+              <Eye className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => handleEditContact(contact)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              title="Edit"
+            >
+              <Edit className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => handleDeleteContact(contact.id)}
+              className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4 text-red-600" />
+            </button>
           </div>
         )}
-      </div>
+        emptyIcon={<Mail className="w-12 h-12 opacity-50" />}
+        emptyMessage="No contacts found"
+      />
 
       {/* Add Modal */}
       <AddContactModal
