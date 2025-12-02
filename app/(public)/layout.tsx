@@ -7,10 +7,10 @@ export default function PublicLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <body suppressHydrationWarning={true}>
       <Navbar />
       {children}
       <Footer />
-    </>
+    </body>
   );
 }

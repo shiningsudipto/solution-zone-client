@@ -35,6 +35,8 @@ This project must maintain a readable, reusable, and scalable structure. Follow 
 - Separate UI components, common elements, layout components, and modular blocks.
 - Ensure components are reusable and self-contained.
 - Maintain a clear separation between public pages and dashboard UI elements.
+- For modal/popup use CustomModal from components
+- For popover use CustomPopover from components
 
 ### **Pages**
 
@@ -46,45 +48,9 @@ This project must maintain a readable, reusable, and scalable structure. Follow 
 - Define all domain-related types inside a dedicated `types` folder.
 - Types must represent the exact shape of all collections used within the app.
 
-### **Services**
-
-- Include modules for dummy-data generation, static-data access, and helper utilities.
-- Keep service logic pure and separated from UI.
-
 ### **Utilities**
 
 - Store general-purpose helpers such as formatters and validators.
-
-### **Assets**
-
-- Organize images, icons, and media files in dedicated folders.
-
----
-
-## 3. Collections — Definitions
-
-The app is driven by strongly typed collections. These types describe all data entities used across public and dashboard sections.
-
-### **Collections to Define**
-
-- Service
-- BlogPost (articles + case studies)
-- TeamMember
-- ContactSubmission
-- Project
-- Task
-- FAQ
-- SiteSettings
-
-Each collection must include:
-
-- Unique IDs
-- Required descriptive fields
-- Optional metadata (SEO, timestamps, tags, etc.)
-- Any necessary relationships (e.g., project → tasks, blog → author, task → assigned member)
-  follow: collections_types.md
-
----
 
 ## 4. Dummy Data — Instructions
 
@@ -107,25 +73,6 @@ follow: collections_types.md
 - Must not rely on external APIs.
 - Must reflect expected app behavior (published/unpublished, progress values, status states).
 - Should be extendable for testing additional UI features.
-
----
-
-## 5. Dashboard Instructions
-
-All CRUD operations in the dashboard must:
-
-- Use modals/popup interfaces for create/update.
-- Validate all fields before saving.
-- Write updates to in-memory or static local data structures.
-- Reflect changes immediately in UI.
-
-### **Dashboard Management Areas**
-
-- **Contacts**: track submissions and update statuses.
-- **Projects**: track progress, members, and tasks.
-- **Tasks**: include drag-and-drop ordering and rich text editing.
-- **Members**: manage team members.
-- **Blog**: manage articles and case studies, including rich text content.
 
 ---
 
