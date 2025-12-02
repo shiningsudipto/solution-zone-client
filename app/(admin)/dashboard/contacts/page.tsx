@@ -7,16 +7,16 @@ import {
   Mail,
   Phone,
   Calendar,
-  User,
-  FileText,
   Plus,
   Search,
   Filter,
   Eye,
   Edit,
   Trash2,
-  X,
 } from "lucide-react";
+import { ViewContactModal } from "./_components/ViewContactModal";
+import { EditContactModal } from "./_components/EditContactModal";
+import { AddContactModal } from "./_components/AddContactModal";
 
 const statusColors = {
   new: "bg-blue-500/10 text-blue-600 border-blue-500/20",
@@ -41,6 +41,7 @@ export default function ContactsPage() {
     useState<ContactSubmission | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<
     Partial<ContactSubmission>
   >({});
@@ -66,6 +67,17 @@ export default function ContactsPage() {
   const handleEditContact = (contact: ContactSubmission) => {
     setEditingContact(contact);
     setIsEditModalOpen(true);
+  };
+
+  const handleAddContact = (
+    newContact: Omit<ContactSubmission, "id" | "createdAt">
+  ) => {
+    const contact: ContactSubmission = {
+      ...newContact,
+      id: `contact-${Date.now()}`,
+      createdAt: new Date().toISOString(),
+    };
+    setContacts((prev) => [contact, ...prev]);
   };
 
   const handleSaveEdit = () => {
@@ -104,7 +116,10 @@ export default function ContactsPage() {
             Manage and track all contact submissions
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all hover:scale-105 shadow-lg shadow-primary/25">
+        <button
+          onClick={() => setIsAddModalOpen(true)}
+          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all hover:scale-105 shadow-lg shadow-primary/25"
+        >
           <Plus className="w-5 h-5" />
           Add Contact
         </button>
@@ -265,180 +280,28 @@ export default function ContactsPage() {
         )}
       </div>
 
+      {/* Add Modal */}
+      <AddContactModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={handleAddContact}
+      />
+
       {/* View Modal */}
-      {isViewModalOpen && selectedContact && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-border flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-foreground">
-                Contact Details
-              </h2>
-              <button
-                onClick={() => setIsViewModalOpen(false)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-              <div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                  <User className="w-4 h-4" />
-                  Name
-                </div>
-                <div className="text-lg font-medium">
-                  {selectedContact.name}
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                  <Mail className="w-4 h-4" />
-                  Email
-                </div>
-                <div className="text-lg">{selectedContact.email}</div>
-              </div>
-
-              {selectedContact.phone && (
-                <div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                    <Phone className="w-4 h-4" />
-                    Phone
-                  </div>
-                  <div className="text-lg">{selectedContact.phone}</div>
-                </div>
-              )}
-
-              <div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                  <FileText className="w-4 h-4" />
-                  Message
-                </div>
-                <div className="text-base leading-relaxed bg-muted/30 p-4 rounded-lg">
-                  {selectedContact.message}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    Source
-                  </div>
-                  <div className="font-medium">{selectedContact.source}</div>
-                </div>
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    Status
-                  </div>
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${
-                      statusColors[selectedContact.status]
-                    }`}
-                  >
-                    {statusLabels[selectedContact.status]}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-sm text-muted-foreground mb-1">
-                  Submitted
-                </div>
-                <div className="font-medium">
-                  {new Date(selectedContact.createdAt).toLocaleString()}
-                </div>
-              </div>
-
-              {selectedContact.notes && (
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    Notes
-                  </div>
-                  <div className="text-base bg-muted/30 p-4 rounded-lg">
-                    {selectedContact.notes}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <ViewContactModal
+        isOpen={isViewModalOpen}
+        onClose={() => setIsViewModalOpen(false)}
+        contact={selectedContact}
+      />
 
       {/* Edit Modal */}
-      {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-card rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6 border-b border-border flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-foreground">
-                Edit Contact
-              </h2>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="p-2 hover:bg-muted rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Status
-                </label>
-                <select
-                  value={editingContact.status}
-                  onChange={(e) =>
-                    setEditingContact({
-                      ...editingContact,
-                      status: e.target.value as ContactSubmission["status"],
-                    })
-                  }
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                >
-                  <option value="new">New</option>
-                  <option value="in-review">In Review</option>
-                  <option value="contacted">Contacted</option>
-                  <option value="closed">Closed</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Notes
-                </label>
-                <textarea
-                  value={editingContact.notes || ""}
-                  onChange={(e) =>
-                    setEditingContact({
-                      ...editingContact,
-                      notes: e.target.value,
-                    })
-                  }
-                  rows={4}
-                  className="w-full px-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-                  placeholder="Add notes about this contact..."
-                />
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  onClick={handleSaveEdit}
-                  className="flex-1 px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:opacity-90 transition-all"
-                >
-                  Save Changes
-                </button>
-                <button
-                  onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 px-6 py-3 border-2 border-border rounded-lg font-semibold hover:border-primary hover:text-primary transition-all"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditContactModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        contact={editingContact}
+        onContactChange={setEditingContact}
+        onSave={handleSaveEdit}
+      />
     </div>
   );
 }
