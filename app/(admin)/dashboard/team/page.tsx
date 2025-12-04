@@ -8,8 +8,6 @@ import {
   Mail,
   Calendar,
   Plus,
-  Search,
-  Filter,
   Eye,
   Edit,
   Trash2,
@@ -20,17 +18,18 @@ import {
   Globe,
   Link as LinkIcon,
 } from "lucide-react";
+import { CustomTable, Column, ColumnFilter } from "@/components/CustomTable";
 import { ViewMemberModal } from "./_components/ViewMemberModal";
 import { EditMemberModal } from "./_components/EditMemberModal";
 import { CreateMemberModal } from "./_components/CreateMemberModal";
 
 const roleColors = {
-  "Creative Director": "bg-purple-500/10 text-purple-600 border-purple-500/20",
-  "Lead Developer": "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  "Marketing Strategist": "bg-green-500/10 text-green-600 border-green-500/20",
-  "UI/UX Designer": "bg-pink-500/10 text-pink-600 border-pink-500/20",
-  "Business Consultant": "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  "Full Stack Developer": "bg-indigo-500/10 text-indigo-600 border-indigo-500/20",
+  "Creative Director": "bg-purple-100 text-purple-800",
+  "Lead Developer": "bg-blue-100 text-blue-800",
+  "Marketing Strategist": "bg-green-100 text-green-800",
+  "UI/UX Designer": "bg-pink-100 text-pink-800",
+  "Business Consultant": "bg-yellow-100 text-yellow-800",
+  "Full Stack Developer": "bg-indigo-100 text-indigo-800",
 };
 
 const getSocialIcon = (provider: string) => {
@@ -45,7 +44,7 @@ const getSocialIcon = (provider: string) => {
 
 export default function TeamPage() {
   const [members, setMembers] = useState<TeamMember[]>(initialMembers);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -58,18 +57,6 @@ export default function TeamPage() {
     bio: "",
     avatar: "",
     socials: [],
-  });
-
-  // Filter members
-  const filteredMembers = members.filter((member) => {
-    const matchesSearch =
-      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      member.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (member.email &&
-        member.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (member.bio && member.bio.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    return matchesSearch;
   });
 
   const handleViewMember = (member: TeamMember) => {
@@ -106,7 +93,7 @@ export default function TeamPage() {
         socials: newMember.socials || [],
         joinedAt: new Date().toISOString().split("T")[0],
       };
-      setMembers((prev) => [...prev, member]);
+      setMembers((prev) => [member, ...prev]);
       setIsCreateModalOpen(false);
       setNewMember({
         name: "",
@@ -128,12 +115,159 @@ export default function TeamPage() {
   // Get unique roles for stats
   const roles = Array.from(new Set(members.map((m) => m.role)));
 
+  // Column definitions
+  const columns: Column<TeamMember>[] = [
+    {
+      key: "name",
+      label: "Member",
+      sortable: true,
+      searchable: true,
+      exportable: true,
+      width: "250px",
+      render: (value, row) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+            {row.avatar ? (
+              <img
+                src={row.avatar}
+                alt={value}
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.display = "none";
+                }}
+              />
+            ) : (
+              value.charAt(0)
+            )}
+          </div>
+          <div>
+            <div className="font-medium">{value}</div>
+            {row.email && (
+              <div className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                <Mail className="w-3 h-3" />
+                {row.email}
+              </div>
+            )}
+          </div>
+        </div>
+      ),
+      exportRender: (value) => value,
+    },
+    {
+      key: "email",
+      label: "Email",
+      exportable: true,
+      className: "hidden",
+    },
+    {
+      key: "role",
+      label: "Role",
+      sortable: true,
+      filterable: true,
+      searchable: true,
+      exportable: true,
+      render: (value) => (
+        <span
+          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+            roleColors[value as keyof typeof roleColors] ||
+            "bg-gray-100 text-gray-800"
+          }`}
+        >
+          {value}
+        </span>
+      ),
+      exportRender: (value) => value,
+    },
+    {
+      key: "bio",
+      label: "Bio",
+      exportable: true,
+      render: (value) =>
+        value ? (
+          <div className="text-sm text-muted-foreground line-clamp-2 max-w-xs">
+            {value}
+          </div>
+        ) : (
+          <span className="text-sm text-muted-foreground italic">No bio</span>
+        ),
+      exportRender: (value) => value || "",
+    },
+    {
+      key: "socials",
+      label: "Social Links",
+      exportable: false,
+      align: "center",
+      render: (value) => {
+        if (!value || value.length === 0) {
+          return (
+            <span className="text-sm text-muted-foreground italic">None</span>
+          );
+        }
+        return (
+          <div className="flex items-center justify-center gap-1">
+            {value.slice(0, 3).map((social: any, idx: number) => (
+              <a
+                key={idx}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-primary"
+                title={social.provider}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {getSocialIcon(social.provider)}
+              </a>
+            ))}
+            {value.length > 3 && (
+              <span className="text-xs text-muted-foreground ml-1">
+                +{value.length - 3}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      key: "joinedAt",
+      label: "Joined Date",
+      sortable: true,
+      exportable: true,
+      render: (value) =>
+        value ? (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Calendar className="w-4 h-4" />
+            {new Date(value).toLocaleDateString()}
+          </div>
+        ) : (
+          <span className="text-sm text-muted-foreground italic">Unknown</span>
+        ),
+      exportRender: (value) =>
+        value ? new Date(value).toLocaleDateString() : "",
+    },
+  ];
+
+  // Filter definitions - get unique roles from data
+  const roleOptions = roles.map((role) => ({
+    label: role,
+    value: role,
+  }));
+
+  const filters: ColumnFilter[] = [
+    {
+      key: "role",
+      label: "Role",
+      options: roleOptions,
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold text-foreground mb-2">Team Members</h1>
+          <h1 className="text-4xl font-bold text-foreground mb-2">
+            Team Members
+          </h1>
           <p className="text-muted-foreground">
             Manage your team members and their information
           </p>
@@ -175,12 +309,14 @@ export default function TeamPage() {
         </div>
         <div className="p-6 rounded-xl border-2 border-border bg-card">
           <div className="text-4xl font-bold text-foreground mb-2">
-            {new Date().getFullYear() -
-              Math.min(
-                ...members
-                  .filter((m) => m.joinedAt)
-                  .map((m) => new Date(m.joinedAt!).getFullYear())
-              )}
+            {members.filter((m) => m.joinedAt).length > 0
+              ? new Date().getFullYear() -
+                Math.min(
+                  ...members
+                    .filter((m) => m.joinedAt)
+                    .map((m) => new Date(m.joinedAt!).getFullYear())
+                )
+              : 0}
           </div>
           <div className="text-sm font-medium text-muted-foreground">
             Years Active
@@ -188,141 +324,49 @@ export default function TeamPage() {
         </div>
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex gap-4">
-        <div className="flex-1 relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search team members..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 border border-border rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-          />
-        </div>
-        <button className="inline-flex items-center gap-2 px-6 py-3 border-2 border-border rounded-lg font-semibold hover:border-primary hover:text-primary transition-all">
-          <Filter className="w-5 h-5" />
-          Filter
-        </button>
-      </div>
-
-      {/* Team Members Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {filteredMembers.map((member) => (
-          <div
-            key={member.id}
-            className="bg-card border border-border rounded-2xl overflow-hidden hover:shadow-xl transition-all hover:scale-[1.02] group"
-          >
-            <div className="p-6 space-y-4">
-              {/* Avatar and Name */}
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                  {member.avatar ? (
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="w-full h-full rounded-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
-                  ) : (
-                    member.name.charAt(0)
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-foreground truncate">
-                    {member.name}
-                  </h3>
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border mt-2 ${
-                      roleColors[member.role as keyof typeof roleColors] ||
-                      "bg-gray-500/10 text-gray-600 border-gray-500/20"
-                    }`}
-                  >
-                    {member.role}
-                  </span>
-                </div>
-              </div>
-
-              {/* Bio */}
-              {member.bio && (
-                <p className="text-sm text-muted-foreground line-clamp-3">
-                  {member.bio}
-                </p>
-              )}
-
-              {/* Contact Info */}
-              <div className="space-y-2">
-                {member.email && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Mail className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">{member.email}</span>
-                  </div>
-                )}
-                {member.joinedAt && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="w-4 h-4 flex-shrink-0" />
-                    <span>
-                      Joined {new Date(member.joinedAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Social Links */}
-              {member.socials && member.socials.length > 0 && (
-                <div className="flex items-center gap-2 pt-2 border-t border-border">
-                  {member.socials.map((social, idx) => (
-                    <a
-                      key={idx}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 hover:bg-muted rounded-lg transition-colors text-muted-foreground hover:text-primary"
-                      title={social.provider}
-                    >
-                      {getSocialIcon(social.provider)}
-                    </a>
-                  ))}
-                </div>
-              )}
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-4 border-t border-border">
-                <button
-                  onClick={() => handleViewMember(member)}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-muted hover:bg-muted/70 rounded-lg transition-colors text-sm font-medium"
-                >
-                  <Eye className="w-4 h-4" />
-                  View
-                </button>
-                <button
-                  onClick={() => handleEditMember(member)}
-                  className="p-2 hover:bg-muted rounded-lg transition-colors"
-                  title="Edit"
-                >
-                  <Edit className="w-4 h-4 text-muted-foreground" />
-                </button>
-                <button
-                  onClick={() => handleDeleteMember(member.id)}
-                  className="p-2 hover:bg-red-100 rounded-lg transition-colors"
-                  title="Delete"
-                >
-                  <Trash2 className="w-4 h-4 text-red-600" />
-                </button>
-              </div>
-            </div>
+      {/* Team Members Table */}
+      <CustomTable
+        data={members}
+        columns={columns}
+        searchable
+        searchPlaceholder="Search team members by name, role, email, or bio..."
+        searchKeys={["name", "role", "email", "bio"]}
+        filters={filters}
+        selectable
+        selectedRows={selectedRows}
+        onSelectionChange={setSelectedRows}
+        defaultSortKey="joinedAt"
+        defaultSortDirection="desc"
+        exportable
+        exportFilename="team_members_export.csv"
+        actions={(member) => (
+          <div className="flex items-center justify-end gap-2">
+            <button
+              onClick={() => handleViewMember(member)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              title="View"
+            >
+              <Eye className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => handleEditMember(member)}
+              className="p-2 hover:bg-muted rounded-lg transition-colors"
+              title="Edit"
+            >
+              <Edit className="w-4 h-4 text-muted-foreground" />
+            </button>
+            <button
+              onClick={() => handleDeleteMember(member.id)}
+              className="p-2 hover:bg-red-100 rounded-lg transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="w-4 h-4 text-red-600" />
+            </button>
           </div>
-        ))}
-      </div>
-
-      {filteredMembers.length === 0 && (
-        <div className="text-center py-12 text-muted-foreground bg-card border border-border rounded-2xl">
-          <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p>No team members found</p>
-        </div>
-      )}
+        )}
+        emptyIcon={<Users className="w-12 h-12 opacity-50" />}
+        emptyMessage="No team members found"
+      />
 
       {/* Modals */}
       <ViewMemberModal
